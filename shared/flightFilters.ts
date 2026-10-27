@@ -1,0 +1,6 @@
+import type {Flight} from './types';
+export interface FlightFilterState {stops:number[];departure:number[];arrival:number[];airlines:string[];refundability:string[];families:string[];cabins:string[];minFare?:number;maxFare?:number;minDuration?:number;maxDuration?:number}
+export const emptyFlightFilters=():FlightFilterState=>({stops:[],departure:[],arrival:[],airlines:[],refundability:[],families:[],cabins:[]});
+export const timeBands=['12 AM – 6 AM','6 AM – 12 PM','12 PM – 6 PM','6 PM – 12 AM'];
+const hour=(date?:string)=>{const h=Number(date?.slice(11,13));return Number.isFinite(h)&&date?Math.floor(h/6):-1;};
+export function matchesFlight(f:Flight,v:FlightFilterState){return (!v.stops.length||v.stops.includes(Math.min(2,f.stops)))&&(!v.departure.length||v.departure.includes(hour(f.segments[0]?.departure)))&&(!v.arrival.length||v.arrival.includes(hour(f.segments.at(-1)?.arrival)))&&(!v.airlines.length||v.airlines.includes(f.airline))&&(!v.refundability.length||v.refundability.includes(f.refundable?'refundable':'nonrefundable'))&&(!v.families.length||v.families.includes(f.fareName))&&(!v.cabins.length||v.cabins.includes(f.cabin||''))&&(v.minFare===undefined||f.amount>=v.minFare)&&(v.maxFare===undefined||f.amount<=v.maxFare)&&(v.minDuration===undefined||f.duration>=v.minDuration)&&(v.maxDuration===undefined||f.duration<=v.maxDuration);}

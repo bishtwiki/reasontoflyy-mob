@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: reasontoflyy-api
+    runtime: docker
+    plan: starter
+    region: singapore
+    healthCheckPath: /api/health
+    dockerfilePath: ./Dockerfile
+    disk:
+      name: reasontoflyy-api-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: PORT
+        value: "10000"
+      - key: DATABASE_PATH
+        value: /data/travel.sqlite
+      - key: TRIPJACK_ENV
+        value: sandbox
+      - key: TRIPJACK_API_KEY
+        sync: false
+      - key: TRIPJACK_FLIGHT_BASE_URL
+        value: https://apitest.tripjack.com
+      - key: TRIPJACK_HOTEL_BASE_URL
+        value: https://apitest-hms.tripjack.com
+      - key: TRIPJACK_HOTEL_BOOKING_BASE_URL
+        value: https://apitest-hotel-booker.tripjack.com
+      - key: ALLOWED_ORIGINS
+        value: https://reasontoflyy.com,https://www.reasontoflyy.com
+      - key: ALLOW_PROVIDER_BOOKINGS
+        value: "false"
+      - key: PUBLIC_API_URL
+        fromService:
+          type: web
+          name: reasontoflyy-api
+          envVarKey: RENDER_EXTERNAL_URL

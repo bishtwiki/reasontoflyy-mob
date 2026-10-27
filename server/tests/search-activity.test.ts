@@ -1,0 +1,4 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {beginSearch,searchActivity} from '../../src/searchActivity';
+test('search loader tracks each product and stays visible until overlapping searches finish',()=>{const hotel=beginSearch('/hotels/search');assert.equal(searchActivity.getSnapshot()?.kind,'hotels');const flights=beginSearch('/flights/search');assert.equal(searchActivity.getSnapshot()?.kind,'flights');hotel();assert.equal(searchActivity.getSnapshot()?.kind,'flights');flights();assert.equal(searchActivity.getSnapshot(),null);for(const path of ['/insurance/search','/hotels/nearby']){const done=beginSearch(path);assert(searchActivity.getSnapshot());done();assert.equal(searchActivity.getSnapshot(),null);}const done=beginSearch('/hotels/regions?q=Delhi');assert.equal(searchActivity.getSnapshot(),null);done();});

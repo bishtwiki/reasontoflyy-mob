@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {flightQuery} from '../validation';
+import {dateAfter} from '../../shared/catalog';
+import {TripJack,type Vendor} from '../tripjack';
+import {Travel} from '../travel';
+import {Store} from '../store';
+import {parseAirportResponse} from '../airportLookup';
+const query={mode:'tripjack',routes:[{from:'DEL',to:'BLR',date:dateAfter(1)}],adults:1,children:0,infants:0,cabin:'ECONOMY',direct:false,tripType:'oneway',fareType:'REGULAR'};
+test('every special fare and non-stop selection reaches the supplier request',async()=>{const store=new Store(':memory:');let payload:any;class Supplier extends TripJack{async request(_g:any,_p:string,body?:unknown):Promise<Vendor>{payload=body;return {searchResult:{tripInfos:{}}};}}try{const travel=new Travel(store,new Supplier());for(const fareType of ['REGULAR','STUDENT','SENIOR_CITIZEN','ARMED_FORCES']){await travel.flights(flightQuery.parse({...query,fareType,direct:true,adults:2,children:1,infants:1}));assert.equal(payload.searchQuery.searchModifiers.pft,fareType);assert.equal(payload.searchQuery.searchModifiers.isDirectFlight,true);assert.deepEqual(payload.searchQuery.paxInfo,{ADULT:2,CHILD:1,INFANT:1});}}finally{store.close();}});
+test('multi-city enforces two to four legs and regular/nonstop restrictions',()=>{const routes=Array.from({length:5},(_,i)=>({from:i%2?'BLR':'DEL',to:i%2?'DEL':'BLR',date:dateAfter(i+1)}));assert(flightQuery.safeParse({...query,tripType:'multi',routes:routes.slice(0,2)}).success);for(const patch of [{routes:routes.slice(0,1)},{routes},{fareType:'STUDENT'},{direct:true}])assert(!flightQuery.safeParse({...query,tripType:'multi',routes:routes.slice(0,2),...patch}).success);});
+test('airport adapter uses actual upstream names and drops invalid airport codes',()=>{assert.deepEqual(parseAirportResponse({ok:true,airports:[{AirportCode:'LCY',AirportName:'London City Airport',CityName:'London',CountryName:'United Kingdom'},{AirportCode:'INVALID',AirportName:'Bad',CityName:'Bad'}]}),[{code:'LCY',name:'London City Airport',city:'London',country:'United Kingdom'}]);assert.throws(()=>parseAirportResponse({ok:false}));});

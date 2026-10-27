@@ -1,0 +1,11 @@
+import type {Hotel,HotelOption} from './types';
+export type HotelFilters={name:string;area:string;minPrice:string;maxPrice:string;stars:number[];cancellation:string[];meals:string[];types:string[];amenities:string[]};
+export const emptyHotelFilters=():HotelFilters=>({name:'',area:'',minPrice:'',maxPrice:'',stars:[],cancellation:[],meals:[],types:[],amenities:[]});
+export function hotelPolicyTimestamp(value:string){return Date.parse(/Z$|[+-]\d{2}:?\d{2}$/.test(value)?value:value+'+05:30');}
+export function cancellationKind(option:HotelOption){if(option.cancellationKnown===false)return 'unknown';if(option.refundable){const deadline=option.cancellationDeadline?hotelPolicyTimestamp(option.cancellationDeadline):NaN;if(Number.isFinite(deadline)&&deadline>Date.now())return 'free';const current=option.penalties.find(p=>hotelPolicyTimestamp(p.from)<=Date.now()&&hotelPolicyTimestamp(p.to)>Date.now());if(current?.amount===0)return 'free';return current?'partial':'refundable';}return 'non-refundable';}
+export function applyHotelFilters(hotels:Hotel[],filters:HotelFilters,sort='price'){
+ return hotels.flatMap(hotel=>{if(filters.name&&!hotel.name.toLowerCase().includes(filters.name.toLowerCase()))return [];if(filters.area&&!`${hotel.name} ${hotel.address} ${hotel.city||''}`.toLowerCase().includes(filters.area.toLowerCase()))return [];if(filters.stars.length&&!filters.stars.includes(Math.round(hotel.stars)))return [];if(filters.types.length&&!filters.types.includes(hotel.propertyType||''))return [];if(filters.amenities.length&&!filters.amenities.every(value=>hotel.amenities.includes(value)))return [];
+ const options=hotel.options.filter(option=>(!filters.meals.length||filters.meals.includes(option.meal))&&(!filters.cancellation.length||filters.cancellation.includes(cancellationKind(option)))&&(filters.minPrice===''||option.amount>=Number(filters.minPrice))&&(filters.maxPrice===''||option.amount<=Number(filters.maxPrice)));
+ if(!options.length)return [];return [{...hotel,options,amount:Math.min(...options.map(option=>option.amount))}];
+ }).sort((a,b)=>sort==='distance'?(a.distanceMeters??Infinity)-(b.distanceMeters??Infinity):sort==='price-desc'?b.amount-a.amount:sort==='rating'?b.stars-a.stars:sort==='name'?a.name.localeCompare(b.name):a.amount-b.amount);
+}

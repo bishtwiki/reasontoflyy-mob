@@ -1,0 +1,10 @@
+import React,{useEffect,useState} from 'react';
+import {Image,Pressable,ScrollView,Text,View,useWindowDimensions} from 'react-native';
+import {C,Icon,Sheet,s} from './ui';
+import type {Hotel} from '../shared/types';
+export function HotelPhoto({hotel,height=190}:{hotel:Hotel;height?:number}){
+ const urls=[...new Set([hotel.image,...hotel.images].filter(Boolean) as string[])];const[index,setIndex]=useState(0);const[open,setOpen]=useState(false);const{width}=useWindowDimensions();
+ useEffect(()=>{setIndex(0);},[hotel.id,hotel.image]);
+ const uri=urls[index];
+ return <><Pressable accessibilityRole="button" accessibilityLabel={`Photos of ${hotel.name}`} disabled={!uri} onPress={()=>setOpen(true)} style={{height,backgroundColor:'#f1eee7',overflow:'hidden'}}>{uri?<Image source={{uri}} resizeMode="cover" accessibilityLabel={hotel.name} onError={()=>setIndex(value=>value+1)} style={{width:'100%',height:'100%'}}/>:<View style={{flex:1,alignItems:'center',justifyContent:'center',gap:8}}><Icon name="bed-outline" size={36} color={C.ink}/><Text style={s.small}>{urls.length?'Photos temporarily unavailable':'Photos not supplied for this hotel'}</Text></View>}{uri&&<View style={{position:'absolute',bottom:12,right:12,flexDirection:'row',alignItems:'center',gap:5,borderRadius:20,paddingHorizontal:10,paddingVertical:6,backgroundColor:'#172b3de0'}}><Icon name="images-outline" size={14} color="white"/><Text style={{color:'white',fontSize:11,fontWeight:'600'}}>{urls.length} photos</Text></View>}</Pressable><Sheet visible={open} onClose={()=>setOpen(false)} title="Hotel photos"><Text numberOfLines={2} style={[s.bodyBold,{marginBottom:12}]}>{hotel.name}</Text><ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator contentContainerStyle={{gap:10}}>{urls.map((url,i)=><View key={url} style={{width:Math.max(240,Math.min(width-50,650))}}><Image source={{uri:url}} resizeMode="contain" style={{width:'100%',height:260,backgroundColor:C.bg,borderRadius:12}}/><Text style={[s.small,{textAlign:'center',paddingTop:8}]}>{i+1} / {urls.length}</Text></View>)}</ScrollView></Sheet></>;
+}

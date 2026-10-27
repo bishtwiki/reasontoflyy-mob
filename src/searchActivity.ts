@@ -1,0 +1,6 @@
+export type SearchKind='flights'|'hotels'|'insurance'|'nearby';
+export type SearchActivity={kind:SearchKind;title:string;subtitle:string}|null;
+const listeners=new Set<()=>void>();const pending=new Map<symbol,Exclude<SearchActivity,null>>();let snapshot:SearchActivity=null;
+function publish(){snapshot=[...pending.values()].at(-1)||null;listeners.forEach(listener=>listener());}
+export const searchActivity={subscribe(listener:()=>void){listeners.add(listener);return()=>{listeners.delete(listener);};},getSnapshot:()=>snapshot};
+export function beginSearch(path:string){const activities:Record<string,Exclude<SearchActivity,null>>={'/flights/search':{kind:'flights',title:'Finding your next flight',subtitle:'Checking available flights and the latest fares.'},'/hotels/search':{kind:'hotels',title:'Finding your perfect stay',subtitle:'Checking hotels, room availability and live prices.'},'/insurance/search':{kind:'insurance',title:'Finding cover for your journey',subtitle:'Checking available plans and premiums.'},'/hotels/nearby':{kind:'nearby',title:'Discovering nearby stays',subtitle:'Finding hotels around your selected place.'}};const activity=activities[path.split('?')[0]];if(!activity)return()=>{};const id=Symbol(path);pending.set(id,activity);publish();return()=>{pending.delete(id);publish();};}

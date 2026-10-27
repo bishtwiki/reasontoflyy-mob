@@ -1,0 +1,6 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {normalizeCalendarFares} from '../calendarFares';
+test('calendar fares retain real dates, prices and currency, without filling missing days',()=>{const d=normalizeCalendarFares({ok:true,currency:{code:'INR'},days:[{date:'2026-10-27',total:10113},{date:'2026-10-28',total:8963.85}]},'2026-10');assert.deepEqual(d.days,[{date:'2026-10-27',total:10113},{date:'2026-10-28',total:8963.85}]);assert.equal(d.currency,'INR');assert.equal(d.indicative,true);});
+test('calendar filters malformed/wrong-month/free placeholder prices and takes actual lowest duplicate',()=>{const d=normalizeCalendarFares({ok:true,currency:{code:'INR'},days:[{date:'2026-02-30',total:100},{date:'2026-03-01',total:100},{date:'2026-02-01',total:0},{date:'2026-02-02',total:-1},{date:'2026-02-03',total:'100'},{date:'2026-02-04',total:200},{date:'2026-02-04',total:150}]},'2026-02');assert.deepEqual(d.days,[{date:'2026-02-04',total:150}]);});
+test('calendar errors and missing currency never become invented fares',()=>{assert.throws(()=>normalizeCalendarFares({ok:false},'2026-10'));assert.throws(()=>normalizeCalendarFares({ok:true,days:[]},'2026-10'),/currency/);assert.deepEqual(normalizeCalendarFares({ok:true,days:[],currency:{code:'INR'}},'2026-10').days,[]);});
