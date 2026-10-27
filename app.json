@@ -2,6 +2,7 @@
   "expo": {
     "name": "Reason to Flyy",
     "slug": "reasontoflyy",
+    "owner": "wiki_99",
     "version": "1.0.0",
     "icon": "./assets/brand/app-icon.png",
     "orientation": "portrait",
@@ -18,7 +19,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/brand/adaptive-foreground.png",
         "backgroundColor": "#17283A"
-      }
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -35,6 +40,11 @@
           "locationWhenInUsePermission": "Allow Reason to Flyy to find hotels near your current location."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "922648c1-6a90-41bc-a1ab-63c44d15ab39"
+      }
+    }
   }
 }
