@@ -1,0 +1,67 @@
+{
+  "info": {
+    "name": "ReasonToFlyy API",
+    "description": "Check the ReasonToFlyy backend. The server calls TripJack; keep the TripJack API key in the server environment and never put it in Postman or the mobile app.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://34-93-165-144.sslip.io/api",
+      "type": "string"
+    },
+    {
+      "key": "travelDate",
+      "value": "2026-11-15",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/health"
+      }
+    },
+    {
+      "name": "Capabilities (provider configuration status)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/capabilities"
+      }
+    },
+    {
+      "name": "Search airports",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/airports?q=Delhi"
+      }
+    },
+    {
+      "name": "Search one-way flights (TripJack through app API)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"mode\": \"tripjack\",\n  \"routes\": [\n    {\n      \"from\": \"DEL\",\n      \"to\": \"BOM\",\n      \"date\": \"{{travelDate}}\"\n    }\n  ],\n  \"adults\": 1,\n  \"children\": 0,\n  \"infants\": 0,\n  \"cabin\": \"ECONOMY\",\n  \"direct\": false,\n  \"tripType\": \"oneway\",\n  \"fareType\": \"REGULAR\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/flights/search"
+      }
+    }
+  ]
+}
