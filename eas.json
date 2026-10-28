@@ -12,6 +12,10 @@
     "preview": {
       "distribution": "internal",
       "environment": "preview",
+      "env": {
+        "PREVIEW_ALLOW_LAN_API": "true",
+        "EXPO_PUBLIC_API_URL": "https://34-93-165-144.sslip.io/api"
+      },
       "android": {
         "buildType": "apk"
       },
@@ -22,6 +26,9 @@
     "production": {
       "autoIncrement": true,
       "environment": "production",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://34-93-165-144.sslip.io/api"
+      },
       "android": {
         "buildType": "app-bundle"
       },
