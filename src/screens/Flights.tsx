@@ -1,3 +1,4 @@
+import {Text} from '../i18n';
 import {MultiCitySearchFields} from '../MultiCitySearchFields';
 import {FlightFilterControl,FlightSortChip} from '../FlightResultControls';
 import {OneWayFlightCard} from '../OneWayFlightCard';
@@ -11,7 +12,7 @@ import {groupFlightOptions} from '../../shared/flightOptions';
 import {FlightFilters} from '../FlightFilters';
 import {emptyFlightFilters,matchesFlight} from '../../shared/flightFilters';
 import React,{useEffect,useMemo,useRef,useState} from 'react';
-import { FlatList,Pressable,ScrollView,StyleSheet,Text,View,useWindowDimensions } from 'react-native';
+import {FlatList,Pressable,ScrollView,StyleSheet,Text as NativeText,View,useWindowDimensions} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { api } from '../api';
 import {FlightSelectionTray} from '../FlightSelectionTray';

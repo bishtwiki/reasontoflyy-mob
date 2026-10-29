@@ -1,6 +1,7 @@
+import {Text,TextInput} from './i18n';
 import {fareDisplayName} from '../shared/flightPresentation';
 import React,{useState} from 'react';
-import {Pressable,ScrollView,Text,TextInput,View,useWindowDimensions} from 'react-native';
+import {Pressable,ScrollView,Text as NativeText,TextInput as NativeTextInput,View,useWindowDimensions} from 'react-native';
 import type {Flight} from '../shared/types';
 import {emptyFlightFilters,matchesFlight,timeBands,type FlightFilterState} from '../shared/flightFilters';
 import {Button,C,Chip,Field,Icon,Sheet,s} from './ui';

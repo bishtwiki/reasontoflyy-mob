@@ -7,10 +7,19 @@ export const config = {
   hotelBase: process.env.TRIPJACK_HOTEL_BASE_URL || 'https://apitest-hms.tripjack.com',
   hotelBookingBase: process.env.TRIPJACK_HOTEL_BOOKING_BASE_URL || 'https://apitest-hotel-booker.tripjack.com',
   allowBookings: process.env.ALLOW_PROVIDER_BOOKINGS === 'true',
+  payuKey: process.env.PAYU_MERCHANT_KEY || '',
+  payuSalt: process.env.PAYU_SALT || '',
+  payuEnvironment: process.env.PAYU_ENV === 'production' ? 'production' : 'test',
+  payuConfigured: !!process.env.PAYU_MERCHANT_KEY && !!process.env.PAYU_SALT,
+  // Live payment collection remains off until successful PayU payment can be
+  // coupled to a confirmed TripJack production booking and failure handling.
+  payuCheckoutEnabled: false,
   razorpayKeyId: process.env.RAZORPAY_KEY_ID || '',
   razorpaySecret: process.env.RAZORPAY_KEY_SECRET || '',
   publicApiUrl: (process.env.PUBLIC_API_URL || `http://localhost:${process.env.PORT || 4000}`).replace(/\/$/, ''),
-  database: process.env.DATABASE_PATH || './data/travel.sqlite',
+  // Vercel Functions have a read-only deployment filesystem; /tmp is only
+  // scratch space and is deliberately used here for a temporary deployment.
+  database: process.env.DATABASE_PATH || (process.env.VERCEL ? '/tmp/travel.sqlite' : './data/travel.sqlite'),
   origins: (process.env.ALLOWED_ORIGINS || 'http://localhost:8085,http://127.0.0.1:8085').split(','),
 };
 for (const base of [config.flightBase,config.hotelBase,config.hotelBookingBase]) {

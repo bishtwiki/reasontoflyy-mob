@@ -1,5 +1,6 @@
+import {Text} from './i18n';
 import React,{useState} from 'react';
-import {Pressable,StyleSheet,Text,View,useWindowDimensions} from 'react-native';
+import {Pressable,StyleSheet,Text as NativeText,View,useWindowDimensions} from 'react-native';
 import type {Airport,Route} from '../shared/types';
 import {dateAfter} from '../shared/catalog';
 import {C,DatePicker,Icon,s} from './ui';

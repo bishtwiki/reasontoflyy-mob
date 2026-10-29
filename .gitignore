@@ -11,3 +11,6 @@ data/
 coverage/
 ios/
 android/
+
+# Local Netlify folder
+.netlify

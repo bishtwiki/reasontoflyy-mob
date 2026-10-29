@@ -1,5 +1,6 @@
+import {Text} from './i18n';
 import React,{useRef,useState} from 'react';
-import {Pressable,ScrollView,Text,View} from 'react-native';
+import {Pressable,ScrollView,Text as NativeText,View} from 'react-native';
 import {C,Icon,Sheet,s} from './ui';
 const months=Array.from({length:12},(_,i)=>new Date(Date.UTC(2000,i,1)).toLocaleDateString('en-GB',{month:'long',timeZone:'UTC'}));
 export function DocumentDateField({label,value,onChange,min='1900-01-01',max='2100-12-31',error}:{label:string;value?:string;onChange:(value:string)=>void;min?:string;max?:string;error?:string}){

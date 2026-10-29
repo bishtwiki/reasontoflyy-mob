@@ -1,104 +1,16 @@
+import {Text} from './i18n';
 import React,{useEffect,useRef,useState} from 'react';
-import {AccessibilityInfo,Animated,Easing,StatusBar,StyleSheet,Text,useWindowDimensions,View} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {ActivityIndicator,Platform,StatusBar,View} from 'react-native';
+import {Asset} from 'expo-asset';
+import {WebView} from 'react-native-webview';
 import {C,Icon} from './ui';
 
-const logo=require('../assets/reference/image-0.png');
-
+const launchVideo=Asset.fromModule(require('../assets/brand/launching.mp4'));
 export function LaunchScreen({onDone}:{onDone:()=>void}){
- const {width}=useWindowDimensions();
- const insets=useSafeAreaInsets();
- const [loaded,setLoaded]=useState(false);
- const [reduceMotion,setReduceMotion]=useState<boolean|null>(null);
- const entrance=useRef(new Animated.Value(0)).current;
- const footer=useRef(new Animated.Value(0)).current;
- const logoScale=useRef(new Animated.Value(.82)).current;
- const screenOpacity=useRef(new Animated.Value(1)).current;
- const orbit=useRef(new Animated.Value(0)).current;
- const glow=useRef(new Animated.Value(0)).current;
- const progress=useRef(new Animated.Value(0)).current;
- const logoWidth=Math.min(width*.64,280);
- const heroSize=logoWidth+64;
-
- useEffect(()=>{
-  let mounted=true;
-  AccessibilityInfo.isReduceMotionEnabled().then(value=>{if(mounted)setReduceMotion(value);}).catch(()=>{if(mounted)setReduceMotion(true);});
-  const listener=AccessibilityInfo.addEventListener('reduceMotionChanged',setReduceMotion);
-  return()=>{mounted=false;listener.remove();};
- },[]);
-
- useEffect(()=>{
-  const fallback=setTimeout(onDone,4500);
-  return()=>clearTimeout(fallback);
- },[onDone]);
-
- useEffect(()=>{
-  if(!loaded||reduceMotion===null)return;
-  if(reduceMotion){onDone();return;}
-  const orbitLoop=Animated.loop(Animated.timing(orbit,{toValue:1,duration:2600,easing:Easing.linear,useNativeDriver:true}));
-  const glowLoop=Animated.loop(Animated.sequence([
-   Animated.timing(glow,{toValue:1,duration:850,easing:Easing.inOut(Easing.quad),useNativeDriver:true}),
-   Animated.timing(glow,{toValue:0,duration:850,easing:Easing.inOut(Easing.quad),useNativeDriver:true}),
-  ]));
-  orbitLoop.start();
-  glowLoop.start();
-  const sequence=Animated.sequence([
-   Animated.parallel([
-    Animated.timing(entrance,{toValue:1,duration:520,easing:Easing.out(Easing.cubic),useNativeDriver:true}),
-    Animated.spring(logoScale,{toValue:1,damping:13,stiffness:125,mass:.8,useNativeDriver:true}),
-   ]),
-   Animated.parallel([
-    Animated.timing(footer,{toValue:1,duration:340,easing:Easing.out(Easing.quad),useNativeDriver:true}),
-    Animated.timing(progress,{toValue:1,duration:1750,easing:Easing.inOut(Easing.quad),useNativeDriver:true}),
-   ]),
-   Animated.delay(180),
-   Animated.parallel([
-    Animated.timing(screenOpacity,{toValue:0,duration:360,easing:Easing.in(Easing.quad),useNativeDriver:true}),
-    Animated.timing(logoScale,{toValue:1.18,duration:360,easing:Easing.in(Easing.quad),useNativeDriver:true}),
-    Animated.timing(footer,{toValue:0,duration:220,easing:Easing.in(Easing.quad),useNativeDriver:true}),
-   ]),
-  ]);
-  sequence.start(({finished})=>{if(finished)onDone();});
-  return()=>{sequence.stop();orbitLoop.stop();glowLoop.stop();};
- },[loaded,reduceMotion,onDone,entrance,footer,logoScale,screenOpacity,orbit,glow,progress]);
-
- const rotation=orbit.interpolate({inputRange:[0,1],outputRange:['0deg','360deg']});
- const glowOpacity=glow.interpolate({inputRange:[0,1],outputRange:[.24,.72]});
- const sparkleScale=glow.interpolate({inputRange:[0,1],outputRange:[.8,1.15]});
-
- return <Animated.View accessibilityViewIsModal accessibilityLabel="Reason to Flyy is opening" style={[styles.screen,{opacity:screenOpacity}]}>
-  <StatusBar barStyle="dark-content"/>
-  <View style={styles.center}>
-   <View style={{width:heroSize,height:heroSize,alignItems:'center',justifyContent:'center'}}>
-    <Animated.View style={[styles.halo,{width:heroSize-8,height:heroSize-8,opacity:glowOpacity,transform:[{scale:sparkleScale}]}]}/>
-    <View style={[styles.orbit,{width:heroSize-20,height:heroSize-20}]}/>
-    <Animated.View style={[styles.orbiting,{width:heroSize-20,height:heroSize-20,transform:[{rotate:rotation}]}]}>
-     <View style={styles.plane}><Icon name="airplane" size={17} color={C.ink}/></View>
-    </Animated.View>
-    <Animated.Image source={logo} accessibilityLabel="Reason to Flyy" onLoad={()=>setLoaded(true)} onError={onDone} resizeMode="contain" style={{width:logoWidth,height:logoWidth/1.125,opacity:entrance,transform:[{scale:logoScale}]}}/>
-    <Animated.View style={[styles.sparkle,{top:heroSize*.17,left:heroSize*.08,opacity:glowOpacity,transform:[{scale:sparkleScale}]}]}><Icon name="sparkles" size={17} color={C.ink}/></Animated.View>
-    <Animated.View style={[styles.sparkle,{right:heroSize*.06,bottom:heroSize*.2,opacity:glowOpacity,transform:[{scale:sparkleScale}]}]}><Icon name="sparkles" size={13} color={C.primaryHover}/></Animated.View>
-   </View>
-  </View>
-  <Animated.View style={[styles.footer,{bottom:Math.max(insets.bottom,20)+34,opacity:footer,transform:[{translateY:footer.interpolate({inputRange:[0,1],outputRange:[12,0]})}]}]}>
-   <Text style={styles.tagline}>Every Dream Has a Destination</Text>
-   <View style={styles.progressTrack}><Animated.View style={[styles.progressFill,{transform:[{scaleX:progress}]}]}/></View>
-   <Text style={styles.caption}>Getting your journey ready</Text>
-  </Animated.View>
- </Animated.View>;
+ const[uri,setUri]=useState<string>();const finished=useRef(false);const fallback=useRef<ReturnType<typeof setTimeout>|null>(null);
+ const finish=()=>{if(finished.current)return;finished.current=true;if(fallback.current)clearTimeout(fallback.current);onDone();};
+ useEffect(()=>{let active=true;void launchVideo.downloadAsync().then(asset=>{if(active)setUri(asset.localUri||asset.uri);}).catch(()=>{});fallback.current=setTimeout(finish,10000);return()=>{active=false;if(fallback.current)clearTimeout(fallback.current);};},[]);
+ const source=uri?JSON.stringify(uri):'';
+ const html=`<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"></head><body style="margin:0;background:#faf9f6;overflow:hidden"><video id="launch" src=${source} autoplay muted playsinline webkit-playsinline style="width:100vw;height:100vh;object-fit:contain"></video><script>const v=document.getElementById('launch');v.onended=()=>window.ReactNativeWebView&&window.ReactNativeWebView.postMessage('ended');v.onerror=()=>window.ReactNativeWebView&&window.ReactNativeWebView.postMessage('error');v.play().catch(()=>{});</script></body></html>`;
+ return <View accessibilityViewIsModal accessibilityLabel="Reason to Flyy is opening" style={{position:'absolute',top:0,right:0,bottom:0,left:0,zIndex:100,backgroundColor:C.pale,overflow:'hidden'}}><StatusBar barStyle="dark-content"/>{uri&&Platform.OS==='web'?React.createElement('video',{src:uri,autoPlay:true,muted:true,playsInline:true,onEnded:finish,onError:finish,style:{width:'100%',height:'100%',objectFit:'contain',backgroundColor:C.pale}}):uri?<WebView source={{html,baseUrl:'file:///'}} originWhitelist={['*']} javaScriptEnabled allowsInlineMediaPlayback mediaPlaybackRequiresUserAction={false} allowFileAccess allowFileAccessFromFileURLs allowUniversalAccessFromFileURLs scrollEnabled={false} bounces={false} onMessage={event=>{if(event.nativeEvent.data==='ended'||event.nativeEvent.data==='error')finish();}} style={{flex:1,backgroundColor:C.pale}}/>:<View style={{flex:1,alignItems:'center',justifyContent:'center',gap:14}}><View style={{width:86,height:86,borderRadius:44,backgroundColor:'white',borderWidth:1,borderColor:C.primary,alignItems:'center',justifyContent:'center'}}><Icon name="airplane" size={42} color={C.ink}/></View><ActivityIndicator color={C.ink}/><Text style={{fontSize:13,fontWeight:'600',color:C.ink}}>Getting your journey ready</Text></View>}</View>;
 }
-
-const styles=StyleSheet.create({
- screen:{position:'absolute',top:0,right:0,bottom:0,left:0,zIndex:100,backgroundColor:C.pale,overflow:'hidden'},
- center:{flex:1,alignItems:'center',justifyContent:'center'},
- halo:{position:'absolute',borderRadius:999,borderWidth:1,backgroundColor:'#f5e5c8',borderColor:'#d5b574'},
- orbit:{position:'absolute',borderRadius:999,borderWidth:1,borderStyle:'dashed',borderColor:'#cbb27a88'},
- orbiting:{position:'absolute',alignItems:'center',justifyContent:'flex-start'},
- plane:{width:31,height:31,borderRadius:16,alignItems:'center',justifyContent:'center',backgroundColor:'white',borderWidth:1,borderColor:'#e6c58a',boxShadow:'0 3px 12px #7f6c4c22'},
- sparkle:{position:'absolute'},
- footer:{position:'absolute',left:25,right:25,alignItems:'center',gap:11},
- tagline:{fontSize:15,fontWeight:'700',color:C.ink,letterSpacing:.4,textAlign:'center'},
- progressTrack:{width:132,height:3,borderRadius:3,backgroundColor:'#e8ddc9',overflow:'hidden'},
- progressFill:{width:'100%',height:'100%',backgroundColor:C.ink,transformOrigin:'left'},
- caption:{fontSize:11,color:C.muted,letterSpacing:.2},
-});

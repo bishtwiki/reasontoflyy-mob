@@ -1,5 +1,6 @@
+import {Text} from './i18n';
 import React,{useEffect,useMemo,useState} from 'react';
-import {Pressable,ScrollView,Text,View} from 'react-native';
+import {Pressable,ScrollView,Text as NativeText,View} from 'react-native';
 import {api} from './api';
 import {Button,C,Icon,Sheet,s} from './ui';
 import {money} from '../shared/catalog';

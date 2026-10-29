@@ -1,7 +1,8 @@
+import {Text} from '../i18n';
 import {FlyingSpinner} from '../SearchLoader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React,{useEffect,useState} from 'react';
-import {Image,Linking,Pressable,ScrollView,Text,View} from 'react-native';
+import {Image,Linking,Pressable,ScrollView,Text as NativeText,View} from 'react-native';
 import * as Location from 'expo-location';
 import {api} from '../api';
 import {Button,C,Chip,Field,Icon,Notice,Sheet,s} from '../ui';

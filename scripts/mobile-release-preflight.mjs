@@ -20,7 +20,10 @@ const privateIPv4=ipv4.length===4&&ipv4.every(n=>Number.isInteger(n)&&n>=0&&n<=2
  (ipv4[0]===172&&ipv4[1]>=16&&ipv4[1]<=31)||
  (ipv4[0]===169&&ipv4[1]===254)
 );
-if(url.protocol!=='https:'||host==='localhost'||host.endsWith('.local')||host==='::1'||privateIPv4||!url.pathname.replace(/\/+$/,'').endsWith('/api')){
+const lanPreview=profile==='preview'&&process.env.PREVIEW_ALLOW_LAN_API==='true'&&
+ (url.protocol==='http:'||url.protocol==='https:')&&
+ (host==='localhost'||host.endsWith('.local')||host==='::1'||privateIPv4);
+if((url.protocol!=='https:'||host==='localhost'||host.endsWith('.local')||host==='::1'||privateIPv4)&&!lanPreview||!url.pathname.replace(/\/+$/,'').endsWith('/api')){
  console.error('Release builds require a publicly reachable HTTPS API URL ending in /api; local and private-network URLs cannot serve installed apps.');
  process.exit(1);
 }

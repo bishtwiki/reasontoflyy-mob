@@ -1,0 +1,23 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.money = exports.services = exports.destinations = exports.airports = void 0;
+exports.dateAfter = dateAfter;
+exports.airports = [
+    ['DEL', 'New Delhi', 'Indira Gandhi International', 'India'], ['BOM', 'Mumbai', 'Chhatrapati Shivaji Maharaj International', 'India'], ['BLR', 'Bengaluru', 'Kempegowda International', 'India'], ['GOI', 'Goa', 'Dabolim Airport', 'India'], ['GOX', 'Goa', 'Manohar International', 'India'], ['HYD', 'Hyderabad', 'Rajiv Gandhi International', 'India'], ['MAA', 'Chennai', 'Chennai International', 'India'], ['CCU', 'Kolkata', 'Netaji Subhas Chandra Bose International', 'India'], ['PNQ', 'Pune', 'Pune Airport', 'India'], ['AMD', 'Ahmedabad', 'Sardar Vallabhbhai Patel International', 'India'], ['JAI', 'Jaipur', 'Jaipur International', 'India'], ['LKO', 'Lucknow', 'Chaudhary Charan Singh International', 'India'], ['COK', 'Kochi', 'Cochin International', 'India'], ['SXR', 'Srinagar', 'Sheikh ul-Alam International', 'India'], ['IXC', 'Chandigarh', 'Shaheed Bhagat Singh International', 'India'], ['ATQ', 'Amritsar', 'Sri Guru Ram Dass Jee International', 'India'], ['GAU', 'Guwahati', 'Lokpriya Gopinath Bordoloi International', 'India'], ['IXB', 'Bagdogra', 'Bagdogra Airport', 'India'], ['VNS', 'Varanasi', 'Lal Bahadur Shastri International', 'India'], ['PAT', 'Patna', 'Jay Prakash Narayan Airport', 'India'], ['IXZ', 'Port Blair', 'Veer Savarkar International', 'India'], ['UDR', 'Udaipur', 'Maharana Pratap Airport', 'India'], ['DXB', 'Dubai', 'Dubai International', 'United Arab Emirates'], ['SIN', 'Singapore', 'Changi Airport', 'Singapore'], ['BKK', 'Bangkok', 'Suvarnabhumi Airport', 'Thailand'], ['HKT', 'Phuket', 'Phuket International', 'Thailand'], ['DPS', 'Bali', 'Ngurah Rai International', 'Indonesia'], ['MLE', 'Malé', 'Velana International', 'Maldives'], ['LHR', 'London', 'Heathrow Airport', 'United Kingdom'], ['JFK', 'New York', 'John F. Kennedy International', 'United States'], ['CDG', 'Paris', 'Charles de Gaulle Airport', 'France'], ['SYD', 'Sydney', 'Sydney Kingsford Smith', 'Australia'], ['KUL', 'Kuala Lumpur', 'Kuala Lumpur International', 'Malaysia'], ['DOH', 'Doha', 'Hamad International', 'Qatar'], ['AUH', 'Abu Dhabi', 'Zayed International', 'United Arab Emirates'], ['CMB', 'Colombo', 'Bandaranaike International', 'Sri Lanka'], ['KTM', 'Kathmandu', 'Tribhuvan International', 'Nepal']
+].map(([code, city, name, country]) => ({ code, city, name, country }));
+exports.destinations = [
+    { name: 'Goa', tag: 'Sun, sand & slow days', image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=700&q=80', code: 'GOI' },
+    { name: 'Bali', tag: 'A little tropical magic', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=700&q=80', code: 'DPS' },
+    { name: 'Dubai', tag: 'A world of possibilities', image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=700&q=80', code: 'DXB' },
+    { name: 'Kashmir', tag: 'Heaven is a place on earth', image: 'https://images.unsplash.com/photo-1595815771614-ade9d652a65d?w=700&q=80', code: 'SXR' },
+];
+exports.services = [
+    { id: 'flights', name: 'Flights', icon: 'airplane', color: '#1889dd' }, { id: 'hotels', name: 'Hotels', icon: 'bed', color: '#ec7652' },
+    { id: 'trains', name: 'Trains', icon: 'train', color: '#7462d4' }, { id: 'bus', name: 'Bus', icon: 'bus', color: '#e89c28' },
+    { id: 'holidays', name: 'Holidays', icon: 'sunny', color: '#00a992' }, { id: 'cabs', name: 'Cabs', icon: 'car-sport', color: '#dd9e13' },
+    { id: 'activities', name: 'Activities', icon: 'bicycle', color: '#e166a0' }, { id: 'visa', name: 'Visa', icon: 'document-text', color: '#4881ce' },
+    { id: 'insurance', name: 'Insurance', icon: 'shield-checkmark', color: '#3b9e73' }, { id: 'cruise', name: 'Cruises', icon: 'boat', color: '#359abd' }, { id: 'forex', name: 'Forex', icon: 'cash', color: '#4088b8' }, { id: 'groups', name: 'Groups', icon: 'people', color: '#9a76bc' }
+];
+const money = (n, currency = 'INR') => new Intl.NumberFormat('en-IN', { style: 'currency', currency, minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(n);
+exports.money = money;
+function dateAfter(days) { const d = new Date(); d.setDate(d.getDate() + days); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }

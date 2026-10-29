@@ -1,5 +1,6 @@
+import {Text} from './i18n';
 import React,{useCallback,useEffect,useRef,useState} from 'react';
-import {Animated,PanResponder,Platform,Pressable,ScrollView,StyleSheet,Text,useWindowDimensions,View} from 'react-native';
+import {Animated,PanResponder,Platform,Pressable,ScrollView,StyleSheet,Text as NativeText,useWindowDimensions,View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Button,C,Icon,s} from './ui';
 import {money} from '../shared/catalog';

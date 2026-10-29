@@ -1,6 +1,7 @@
+import {Text} from './i18n';
 import {fareRuleWindow,orderedFareRuleRows,rtfRuleFee,fareRuleRestriction,fareRuleNoShowHint} from '../shared/fareRulePresentation';
 import React from 'react';
-import {Text,View} from 'react-native';
+import {Text as NativeText,View} from 'react-native';
 import type {FareRuleDisplay,FareRuleRow} from '../shared/fareRules';
 import {money} from '../shared/catalog';
 import {C,Icon} from './ui';

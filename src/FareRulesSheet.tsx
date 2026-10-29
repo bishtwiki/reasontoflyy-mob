@@ -1,7 +1,8 @@
+import {Text} from './i18n';
 import {fareRuleWindow,orderedFareRuleRows,rtfRuleFee,fareRuleRestriction,fareRuleNoShowHint} from '../shared/fareRulePresentation';
 import {FareRuleSummary} from './FareRuleSummary';
 import React,{useEffect,useState} from 'react';
-import {Pressable,ScrollView,StyleSheet,Text,View,useWindowDimensions} from 'react-native';
+import {Pressable,ScrollView,StyleSheet,Text as NativeText,View,useWindowDimensions} from 'react-native';
 import type {Flight} from '../shared/types';
 import type {FareRuleDisplay,FareRulesResponse} from '../shared/fareRules';
 import {fareDisplayName} from '../shared/flightPresentation';

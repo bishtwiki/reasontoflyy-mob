@@ -1,5 +1,6 @@
+import {Text} from './i18n';
 import React,{useState} from 'react';
-import {FlatList,Pressable,Text,View} from 'react-native';
+import {FlatList,Pressable,Text as NativeText,View} from 'react-native';
 import {CountryFlag} from './CountryFlag';
 import {C,Field,Icon,Sheet,s} from './ui';
 type Option={value:string;label:string;countryCode?:string};

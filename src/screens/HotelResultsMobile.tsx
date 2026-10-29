@@ -1,9 +1,10 @@
+import {Text} from '../i18n';
 import {HotelCheckIn,HotelRatePolicy,HotelSections} from '../HotelInfo';
 import {hotelCancellation,hotelStay} from '../../shared/hotelPresentation';
 import {distanceLabel} from '../../shared/hotelNearby';
 import {HotelPhoto} from '../HotelPhoto';
 import React,{useMemo,useState} from 'react';
-import {Image,Linking,Pressable,ScrollView,Text,View} from 'react-native';
+import {Image,Linking,Pressable,ScrollView,Text as NativeText,View} from 'react-native';
 import {api} from '../api';
 import {useApp} from '../context';
 import {Button,C,Chip,Empty,Field,Header,Icon,Notice,Sheet,s} from '../ui';

@@ -11,7 +11,7 @@ import { rateLimit } from 'express-rate-limit';
 import { createHash,randomBytes,randomUUID,scryptSync,timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 import { config } from './config';
-import {Razorpay,registerPayments} from './payments';
+import {PayU,registerPayments} from './payments';
 import { Store } from './store';
 import { TripJack, type Vendor } from './tripjack';
 import { Travel, type QuoteState } from './travel';
@@ -41,11 +41,15 @@ function supplierTrace(value:unknown):string|number|undefined{
  }
  return undefined;
 }
-export function createApp(store=new Store(config.database),provider=new TripJack(),paymentGateway=new Razorpay()){
+export function createApp(store=new Store(config.database),provider=new TripJack(),paymentGateway:any=new PayU()){
  const app=express();const travel=new Travel(store,provider);
  app.disable('x-powered-by');app.use(helmet());app.use(compression());
  app.use(cors({origin(origin,done){if(!origin||config.origins.includes(origin))done(null,true);else done(new AppError(403,'ORIGIN_BLOCKED','This website is not allowed to access the API.'));}}));
+ // Passport photos arrive as a short-lived, resized JPEG payload. Parse only
+ // this endpoint with the larger cap; the rest of the API stays at 100 KB.
+ app.use('/api/passport/read',express.json({limit:'8mb'}));
  app.use(express.json({limit:'100kb'}));
+ app.use(express.urlencoded({extended:false,limit:'32kb'}));
  app.use('/api',rateLimit({windowMs:60000,limit:120,standardHeaders:'draft-8',legacyHeaders:false}));
  const auth=(req:Request,res:Response,next:NextFunction)=>{
   const token=req.headers.authorization?.replace(/^Bearer /,'');if(!token)return next(new AppError(401,'LOGIN_REQUIRED','Sign in to continue.'));
@@ -56,9 +60,21 @@ export function createApp(store=new Store(config.database),provider=new TripJack
  registerPayments(app,store,auth,paymentGateway);
  const authenticate=(user:User,res:Response)=>{const token=randomBytes(32).toString('hex');store.db.prepare('INSERT INTO sessions VALUES (?,?,?)').run(sha(token),user.id,Date.now()+7*86400000);res.json({user,token});};
  const authLimiter=rateLimit({windowMs:15*60000,limit:30,standardHeaders:'draft-8',legacyHeaders:false});
+ const passportReadLimiter=rateLimit({windowMs:60000,limit:6,standardHeaders:'draft-8',legacyHeaders:false});
+ app.post('/api/passport/read',passportReadLimiter,asyncRoute(async(req,res)=>{
+  res.setHeader('Cache-Control','no-store, private');
+  const input=z.object({imageBase64:z.string().min(100).max(7_500_000).regex(/^[A-Za-z0-9+/]+={0,2}$/),mimeType:z.literal('image/jpeg')}).parse(req.body);
+  let response:globalThis.Response;
+  try{response=await fetch('https://reasontoflyy.com/api/b2c/flight/read-passport',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({imageBase64:input.imageBase64,mimeType:'image/jpeg'}),signal:AbortSignal.timeout(30000),redirect:'error'});}
+  catch{throw new AppError(502,'PASSPORT_READER_UNAVAILABLE','Passport reading is temporarily unavailable. Enter the details manually.');}
+  let body:any;try{body=await response.json();}catch{throw new AppError(502,'PASSPORT_READER_INVALID','The passport reader returned an unreadable response. Enter the details manually.');}
+  res.setHeader('Cache-Control','no-store');
+  if(!response.ok||body?.success===false||body?.ok===false)throw new AppError(502,'PASSPORT_READER_FAILED','The passport reader could not read this image. Try another photo or enter details manually.');
+  res.json(body);
+ }));
  app.get('/api/homepage',asyncRoute(async(_req,res)=>{try{res.json(await homepage());}catch{res.status(503).json({error:{code:'HOMEPAGE_UNAVAILABLE',message:'Homepage content is temporarily unavailable. Please retry.'}});}}));
  app.get('/api/health',(_req,res)=>res.json({ok:true,provider:'TripJack',environment:config.environment}));
- app.get('/api/capabilities',(_req,res)=>res.json({provider:'TripJack',environment:config.environment,configured:!!config.key,bookingEnabled:config.allowBookings&&config.environment==='sandbox',livePayments:false,testPayments:config.razorpayKeyId.startsWith('rzp_test_')&&!!config.razorpaySecret,services:services.map(s=>({id:s.id,supported:['flights','hotels'].includes(s.id),note:['flights','hotels'].includes(s.id)?'TripJack integration; account access and UAT required.':s.id==='insurance'?'Insurance quotes use the ReasonToFlyy TripSafe service; policy issuance is not connected.':'No verified TripJack booking contract configured. Travel enquiries can be saved.'}))} satisfies Capabilities));
+ app.get('/api/capabilities',(_req,res)=>res.json({provider:'TripJack',environment:config.environment,configured:!!config.key,bookingEnabled:config.allowBookings&&config.environment==='sandbox',livePayments:false,payuConfigured:config.payuConfigured,payuCheckoutEnabled:config.payuCheckoutEnabled,services:services.map(s=>({id:s.id,supported:['flights','hotels'].includes(s.id),note:['flights','hotels'].includes(s.id)?'TripJack integration; account access and UAT required.':s.id==='insurance'?'Insurance quotes use the ReasonToFlyy TripSafe service; policy issuance is not connected.':'No verified TripJack booking contract configured. Travel enquiries can be saved.'}))} satisfies Capabilities));
  app.get('/api/airports',asyncRoute(async(req,res)=>res.json(await lookupAirports(String(req.query.q||'')))));
  app.post('/api/auth/register',authLimiter,(req,res,next)=>{try{
   const input=z.object({name:z.string().trim().min(2).max(80),email:z.email().max(160).or(z.literal('')).default(''),marketingOptIn:z.boolean().optional(),password:z.string().min(10).max(128),phone:z.string().regex(/^\+?[1-9]\d{7,14}$/).or(z.literal('')).default('')}).parse(req.body);

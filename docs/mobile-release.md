@@ -11,12 +11,12 @@ The app uses Expo managed builds. EAS profiles are provided for a device-install
    eas env:set --name EXPO_PUBLIC_API_URL --value https://api.example.com/api --environment production --visibility plaintext
    ```
 
-3. Keep TripJack and Razorpay credentials on the API server only. Do not create `EXPO_PUBLIC_` variables for credentials.
+3. Keep TripJack and PayU credentials on the API server only. Do not create `EXPO_PUBLIC_` variables for credentials.
 4. Sign in to EAS and initialize this project once with `eas init`. Review and retain the generated EAS project ID.
 5. Confirm that `com.reasontoflyy.app` is available and is the intended permanent Android package / iOS bundle ID. If the app already exists in either store, use that store listing's exact identifier instead before the first build.
 6. For iOS device and App Store builds, configure an Apple Developer team and signing credentials in EAS. For Play submission, configure a Google Play service account and create the app listing first.
 
-After the Render deployment is healthy, copy its public URL and add `/api` to it for the EAS `EXPO_PUBLIC_API_URL` setting. Add Razorpay credentials to the Render service later if/when the payment gateway is configured.
+After the API deployment is healthy, set its public URL with `/api` as the EAS `EXPO_PUBLIC_API_URL`. PayU Hosted Checkout is connected, but live checkout stays disabled until TripJack can confirm production bookings.
 
 The pre-install hook rejects preview and production builds if `EXPO_PUBLIC_API_URL` is missing, private-network, non-HTTPS, or missing the `/api` prefix.
 

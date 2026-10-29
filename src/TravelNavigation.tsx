@@ -1,5 +1,6 @@
+import {Text} from './i18n';
 import React from 'react';
-import {Pressable,Text,View} from 'react-native';
+import {Pressable,Text as NativeText,View} from 'react-native';
 import {SvgXml} from 'react-native-svg';
 import {useApp} from './context';
 import {C,Icon,s} from './ui';

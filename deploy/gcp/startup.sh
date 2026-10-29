@@ -37,8 +37,8 @@ import urllib.request
 project = "vertexai-467906"
 secrets = {
     "TRIPJACK_API_KEY": "tripjack-api-key",
-    "RAZORPAY_KEY_ID": "razorpay-key-id",
-    "RAZORPAY_KEY_SECRET": "razorpay-key-secret",
+    "PAYU_MERCHANT_KEY": "payu-merchant-key",
+    "PAYU_SALT": "payu-salt",
 }
 
 metadata = urllib.request.Request(
@@ -66,6 +66,7 @@ config = {
     "TRIPJACK_FLIGHT_BASE_URL": "https://api.tripjack.com",
     "TRIPJACK_HOTEL_BASE_URL": "https://hms-search.tripjack.com",
     "TRIPJACK_HOTEL_BOOKING_BASE_URL": "https://hms-booker.tripjack.com",
+    "PAYU_ENV": "production",
     "ALLOW_PROVIDER_BOOKINGS": "true",
     "ALLOW_LIVE_BOOKINGS": "true",
     "PUBLIC_API_URL": f"https://{ '34-93-165-144.sslip.io' }",

@@ -1,5 +1,6 @@
+import {Text} from './i18n';
 import React,{useEffect,useState} from 'react';
-import {Image,Pressable,ScrollView,Text,View,useWindowDimensions} from 'react-native';
+import {Image,Pressable,ScrollView,Text as NativeText,View,useWindowDimensions} from 'react-native';
 import {C,Icon,Sheet,s} from './ui';
 import type {Hotel} from '../shared/types';
 export function HotelPhoto({hotel,height=190}:{hotel:Hotel;height?:number}){

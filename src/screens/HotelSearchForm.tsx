@@ -1,8 +1,9 @@
+import {Text} from '../i18n';
 import {FlyingSpinner} from '../SearchLoader';
 import {HotelAdvancedSearch} from './HotelAdvancedSearch';
 import type {HotelLocation} from '../../shared/hotelNearby';
 import React,{useEffect,useRef,useState} from 'react';
-import {Pressable,ScrollView,Text,View} from 'react-native';
+import {Pressable,ScrollView,Text as NativeText,View} from 'react-native';
 import {api} from '../api';
 import {useApp} from '../context';
 import {Button,C,Card,Chip,Counter,DatePicker,Empty,Field,Header,Icon,Notice,Page,Sheet,s} from '../ui';

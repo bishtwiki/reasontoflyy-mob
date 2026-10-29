@@ -1,5 +1,6 @@
+import {Text} from './i18n';
 import React,{useEffect,useRef,useState,useSyncExternalStore} from 'react';
-import {AccessibilityInfo,Animated,Easing,Modal,Platform,StyleSheet,Text,View} from 'react-native';
+import {AccessibilityInfo,Animated,Easing,Modal,Platform,StyleSheet,Text as NativeText,View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {LinearGradient} from 'expo-linear-gradient';
 import {searchActivity} from './searchActivity';

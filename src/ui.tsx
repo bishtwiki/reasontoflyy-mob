@@ -1,6 +1,7 @@
+import {Text,TextInput} from './i18n';
 import {FlyingSpinner} from './SearchLoader';
 import React,{useEffect,useState} from 'react';
-import { ActivityIndicator,Modal,Pressable,ScrollView,StyleSheet,Text,TextInput,View,useWindowDimensions,type TextInputProps,type ViewStyle } from 'react-native';
+import {ActivityIndicator,Modal,Pressable,ScrollView,StyleSheet,Text as NativeText,TextInput as NativeTextInput,View,useWindowDimensions,type TextInputProps,type ViewStyle} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from './context';
 import {api} from './api';

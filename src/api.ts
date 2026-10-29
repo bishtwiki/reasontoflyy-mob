@@ -1,7 +1,7 @@
 import {beginSearch} from './searchActivity';
 import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
-const BASE=process.env.EXPO_PUBLIC_API_URL||'http://localhost:4000/api';
+const BASE=process.env.EXPO_PUBLIC_API_URL||'https://34-93-165-144.sslip.io/api';
 let token='';
 export class ApiError extends Error {constructor(message:string,public code:string,public details?:any){super(message);}}
 export const tokenStore={

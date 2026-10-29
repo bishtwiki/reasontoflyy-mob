@@ -1,5 +1,6 @@
+import {Text} from './i18n';
 import React from 'react';
-import {ScrollView,Text,View,useWindowDimensions} from 'react-native';
+import {ScrollView,Text as NativeText,View,useWindowDimensions} from 'react-native';
 import type {Flight} from '../shared/types';
 export {seatsLabel} from '../shared/flightPresentation';
 import {Button,Sheet,s} from './ui';

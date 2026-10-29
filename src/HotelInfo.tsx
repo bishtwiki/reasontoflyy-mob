@@ -1,5 +1,6 @@
+import {Text} from './i18n';
 import React,{useState} from 'react';
-import {Pressable,Text,View} from 'react-native';
+import {Pressable,Text as NativeText,View} from 'react-native';
 import {C,Icon,s} from './ui';
 import type {Hotel,HotelOption,HotelSection} from '../shared/types';
 import {hotelCancellation,hotelPolicyDate} from '../shared/hotelPresentation';

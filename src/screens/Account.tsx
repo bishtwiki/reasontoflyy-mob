@@ -1,6 +1,7 @@
+import {Text} from '../i18n';
 import {normalizeTraveller} from '../../shared/travellerPresentation';
 import React,{useEffect,useState} from 'react';
-import { Image,Pressable,ScrollView,Text,View } from 'react-native';
+import {Image,Pressable,ScrollView,Text as NativeText,View} from 'react-native';
 import { api } from '../api';
 import { useApp } from '../context';
 import { Button,C,Card,Chip,Empty,Field,Header,Heading,Icon,Notice,Page,Sheet,s } from '../ui';

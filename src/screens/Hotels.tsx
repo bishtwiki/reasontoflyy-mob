@@ -1,6 +1,7 @@
+import {Text} from '../i18n';
 import {hotelAmenityGroups} from '../../shared/hotelDisplay';
 import React,{useState} from 'react';
-import {Linking,Pressable,ScrollView,Text,View} from 'react-native';
+import {Linking,Pressable,ScrollView,Text as NativeText,View} from 'react-native';
 import {HotelPhoto} from '../HotelPhoto';
 import {HotelCheckIn,HotelRatePolicy,HotelSections,HotelBullets} from '../HotelInfo';
 import {api} from '../api';
